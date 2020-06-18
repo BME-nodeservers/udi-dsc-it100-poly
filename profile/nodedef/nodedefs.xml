@@ -1,0 +1,48 @@
+<nodeDefs>
+    <!-- controller -->
+    <nodeDef id="DSC" nodeType="139" nls="ctl">
+        <editors />
+        <sts>
+			<st id="ST" editor="bool" />
+			<st id="GV0" editor="system" />
+			<st id="GV1" editor="bool" />
+			<st id="GV2" editor="bool" />
+			<st id="GV3" editor="bool" />
+			<st id="GV4" editor="bool" />
+			<st id="GV5" editor="bool" />
+		</sts>
+    	<cmds>
+			<sends>
+				<cmd id="DON" />
+				<cmd id="DOF" />
+			</sends>
+			<accepts>
+				<cmd id="DISCOVER" />
+        		<cmd id="REMOVE_NOTICES_ALL" />
+        		<cmd id="UPDATE_PROFILE" />
+        		<cmd id="DEBUG">
+            		<p id="" editor="DEBUG" init="10"/>
+        		</cmd>
+        		<cmd id="PANIC_FIRE" />
+        		<cmd id="PANIC_AUX" />
+        		<cmd id="PANIC_POLICE" />
+			</accepts>
+		</cmds>
+    </nodeDef>
+
+    <nodeDef id="zone" nodeType="139" nls="zone">
+        <editors />
+        <sts>
+			<st id="ST" editor="zone_state" />
+			<st id="ALARM" editor="bool" />
+		</sts>
+    	<cmds>
+			<sends>
+				<cmd id="DON" />
+				<cmd id="DOF" />
+			</sends>
+			<accepts />
+		</cmds>
+    </nodeDef>
+
+</nodeDefs>

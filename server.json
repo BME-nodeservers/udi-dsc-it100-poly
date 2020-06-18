@@ -1,0 +1,22 @@
+{
+    "name": "DSC-IT100",
+    "docs": "https://github.com/bpaauwe/udi-dsc-it100-poly/README.md",
+    "type": "python3",
+    "executable": "dsc-it100.py",
+    "install": "install.sh",
+    "description": "Control and status for DSC alarm via IT-100",
+    "notice": "see https://cms.dsc.com/download.php?t=1&id=16238 for more information",
+    "shortPoll": "5",
+    "longPoll": "60",
+    "profile_version": "1.0.0",
+    "credits": [
+    	{
+    		"title": "DSC-IT100 A node server for DSC Alarm Panels",
+    		"author": "Bob Paauwe",
+    		"version": "1.0.0",
+    		"date": "June 17, 2020",
+    		"source": "https://github.com/bpaauwe/udi-dsc-it100-poly",
+		"license": "https://github.com/bpaauwe/udi-dsc-it100-poly/LICENSE"
+		}
+	]
+}

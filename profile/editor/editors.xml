@@ -1,0 +1,15 @@
+<editors>
+	<!-- Boolean -->
+	<editor id="bool">
+		<range uom="2" subset="0,1" />
+	</editor>
+	<editor id="system">
+		<range uom="25" subset="0-4" nls="STATE" />
+	</editor>
+	<editor id="zone_state">
+		<range uom="25" subset="0-2" nls="ZONE" />
+	</editor>
+	<editor id="DEBUG">
+        <range uom="25" subset="0,10,20,30,40,50" nls="DBG" />
+    </editor>
+</editors>
