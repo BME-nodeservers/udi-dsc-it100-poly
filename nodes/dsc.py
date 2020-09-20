@@ -4,10 +4,7 @@ Polyglot v2 node server DSC alarm panel status and control via IT-100
 Copyright (C) 2020 Robert Paauwe
 """
 
-try:
-    import polyinterface
-except ImportError:
-    import pgc_interface as polyinterface
+import polyinterface
 import sys
 import time
 import datetime

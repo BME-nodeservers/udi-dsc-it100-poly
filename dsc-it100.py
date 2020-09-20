@@ -5,10 +5,7 @@ Copyright (C) 2020 Robert Paauwe
 """
 import sys
 import time
-try:
-    import polyinterface
-except ImportError:
-    import pgc_interface as polyinterface
+import polyinterface
 from nodes import dsc
 from nodes import zone
 
