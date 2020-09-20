@@ -35,7 +35,7 @@ class Controller(polyinterface.Controller):
         self.configured = False
         self.dsc = None
         self.mesg_thread = None
-        self.source_status = 0x00 # assume all sources are inactive
+        self.discovery_ok = False
 
         self.params = node_funcs.NSParameters([{
             'name': 'IP Address',
@@ -51,37 +51,7 @@ class Controller(polyinterface.Controller):
             },
             {
             'name': 'Zone 1',
-            'default': 'Zone 1',
-            'isRequired': False,
-            'notice': '',
-            },
-            {
-            'name': 'Zone 2',
-            'default': 'Zone 2',
-            'isRequired': False,
-            'notice': '',
-            },
-            {
-            'name': 'Zone 3',
-            'default': 'Zone 3',
-            'isRequired': False,
-            'notice': '',
-            },
-            {
-            'name': 'Zone 4',
-            'default': 'Zone 4',
-            'isRequired': False,
-            'notice': '',
-            },
-            {
-            'name': 'Zone 5',
-            'default': 'Zone 5',
-            'isRequired': False,
-            'notice': '',
-            },
-            {
-            'name': 'Zone 6',
-            'default': 'Zone 6',
+            'default': 'Example Zone',
             'isRequired': False,
             'notice': '',
             },
@@ -91,6 +61,7 @@ class Controller(polyinterface.Controller):
 
     # Process changes to customParameters
     def process_config(self, config):
+        LOGGER.error('process_config = {}'.format(config))
         (valid, changed) = self.params.update_from_polyglot(config)
         if changed and not valid:
             LOGGER.debug('-- configuration not yet valid')
@@ -101,6 +72,8 @@ class Controller(polyinterface.Controller):
             self.removeNoticesAll()
             self.configured = True
             # TODO: Run discovery/startup here?
+            if self.discovery_ok:
+                self.discover()
         elif valid:
             LOGGER.debug('-- configuration not changed, but is valid')
             # is this necessary
@@ -111,12 +84,16 @@ class Controller(polyinterface.Controller):
         self.set_logging_level()
         self.check_params()
 
+        self.discovery_ok = True
+
         # Open a connection to the IT-100
         if self.configured:
             self.dsc = it100.DSCConnection(self.params.get('IP Address'), self.params.get('Port'))
             self.dsc.Connect()
 
             self.discover()
+
+            self.update_profile(' ')
 
             if self.dsc.connected:
                 # Start a thread that listens for messages from the russound.
@@ -126,6 +103,7 @@ class Controller(polyinterface.Controller):
 
                 # status update
                 self.dsc.StatusRequest()
+                self.dsc.LabelRequest()
 
             LOGGER.info('Node server started')
         else:
@@ -143,10 +121,13 @@ class Controller(polyinterface.Controller):
 
     def discover(self, *args, **kwargs):
         LOGGER.debug('in discover() - Setting up zones')
-        for z in range(1,17):
+        for z in range(1,65):
             param = 'Zone ' + str(z)
+            if self.params.get(param) == None:
+                continue
+
             node = zone.Zone(self, self.address, 'zone_' + str(z), self.params.get(param))
-            node.connection(self.dsc)
+            #node.connection(self.dsc)
 
             try:
                 old = self.poly.getNode('zone_' + str(z))
@@ -188,14 +169,91 @@ class Controller(polyinterface.Controller):
     def processCommand(self, msg):
         if msg.command == protocol.MSG_ZONE_OPEN:
             zone = int(msg.data.decode())
+            zone_addr = 'zone_' + str(zone)
             LOGGER.warning('   zone {} open'.format(zone))
+            if zone_addr in self.nodes:
+                self.nodes[zone_addr].set_state(1)
         elif msg.command == protocol.MSG_ZONE_RESTORED:
             zone = int(msg.data.decode())
+            zone_addr = 'zone_' + str(zone)
             LOGGER.warning('   zone {} closed'.format(zone))
+            if zone_addr in self.nodes:
+                self.nodes[zone_addr].set_state(0)
+        elif msg.command == protocol.MSG_ZONE_ALARM:
+            zone = int(msg.data[:-3].decode())
+            zone_addr = 'zone_' + str(zone)
+            LOGGER.warning('   zone {} in alarm'.format(zone))
+            if zone_addr in self.nodes:
+                self.nodes[zone_addr].set_state(2)
+        elif msg.command == protocol.MSG_ZONE_ALARM_RESTORE:
+            zone = int(msg.data[:-3].decode())
+            zone_addr = 'zone_' + str(zone)
+            LOGGER.warning('   zone {} alarm restore'.format(zone))
+            if zone_addr in self.nodes:
+                self.nodes[zone_addr].set_state(0)
         elif msg.command == protocol.MSG_LCD_UPDATE: # LCD update
             LOGGER.warning('   message = ' + str(msg.data[5:].decode()))
+        elif msg.command == protocol.MSG_LCD_UPDATE: # LCD update
+            LOGGER.warning('   message = ' + str(msg.data[5:].decode()))
+        elif msg.command == protocol.MSG_ACK:
+            LOGGER.debug('Ack')
+        elif msg.command == protocol.MSG_SYSTEM_BELL_TROUBLE:
+            self.setDriver('GV1', 1)
+        elif msg.command == protocol.MSG_SYSTEM_BELL_RESTORED:
+            self.setDriver('GV1', 0)
+        elif msg.command == protocol.MSG_PANEL_BATTERY_TROUBLE:
+            self.setDriver('GV2', 1)
+        elif msg.command == protocol.MSG_PANEL_BATTERY_RESTORED:
+            self.setDriver('GV2', 0)
+        elif msg.command == protocol.MSG_PANEL_AC_TROUBLE:
+            self.setDriver('GV3', 1)
+        elif msg.command == protocol.MSG_PANEL_AC_RESTORED:
+            self.setDriver('GV3', 0)
+        elif msg.command == protocol.MSG_FTC_TROUBLE:
+            self.setDriver('GV4', 1)
+        elif msg.command == protocol.MSG_FTC_RESTORED:
+            self.setDriver('GV4', 0)
+        elif msg.command == protocol.MSG_GENERAL_SYSTEM_TAMPER:
+            self.setDriver('GV5', 1)
+        elif msg.command == protocol.MSG_GENERAL_SYSTEM_TAMPER_RESTORED:
+            self.setDriver('GV5', 0)
+        elif msg.command == protocol.MSG_PARTITION_READY:
+            partition = int(msg.data.decode())
+            LOGGER.warning('  partition {} ready'.format(partition))
+        elif msg.command == protocol.MSG_PARTITION_NOT_READY:
+            partition = int(msg.data.decode())
+            LOGGER.warning('  partition {} not ready'.format(partition))
+        elif msg.command == protocol.MSG_PARTITION_BUSY:
+            partition = int(msg.data.decode())
+            LOGGER.warning('  partition {} busy'.format(partition))
+        elif msg.command == protocol.MSG_PARTITION_TROUBLE_RESTORED:
+            partition = int(msg.data.decode())
+            LOGGER.warning('  partition {} trouble restored'.format(partition))
+        elif msg.command == protocol.MSG_LED_STATUS:
+            led = {
+                0x31:'Ready',
+                0x32:'Armed',
+                0x33:'Memory',
+                0x34:'Bypass',
+                0x35:'Trouble',
+                0x36:'Program',
+                0x37:'Fire',
+                0x38:'Backlight',
+                0x39:'AC',
+                }
+            led_status = {
+                0x30:'OFF',
+                0x31:'ON',
+                0x32:'Flashing',
+                }
+            LOGGER.warning('  LED {} is {}'.format(led[msg.data[0]], led_status[msg.data[1]]))
+        elif msg.command == protocol.MSG_LABELS:
+            zone = int(msg.data[0:3].decode())
+            label = msg.data[3:].decode()
+            LOGGER.warning('Label: {} = {}'.format(zone, label))
         else:
             LOGGER.warning('command = {}'.format(msg.command))
+            LOGGER.warning('   data = ' + ' '.join('{:02x}'.format(x) for x in msg.data))
 
 
     def set_logging_level(self, level=None):
