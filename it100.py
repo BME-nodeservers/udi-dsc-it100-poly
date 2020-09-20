@@ -39,6 +39,11 @@ class DSCConnection:
         logging.warning('[{}]'.format(', '.join(hex(x) for x in cmd.serialize())))
         self.sock.send(cmd.serialize())
 
+    def LabelRequest(self):
+        cmd = protocol.DSCMessage(protocol.CMD_LABELS_REQUEST, b'')
+        logging.warning('[{}]'.format(', '.join(hex(x) for x in cmd.serialize())))
+        self.sock.send(cmd.serialize())
+
     def Loop(self, handler):
         # Main loop waits for messages from IT-100 and then processes them
         #status_request()

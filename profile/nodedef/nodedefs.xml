@@ -1,6 +1,6 @@
 <nodeDefs>
     <!-- controller -->
-    <nodeDef id="DSC" nodeType="139" nls="ctl">
+    <nodeDef id="dsc" nodeType="139" nls="ctl">
         <editors />
         <sts>
 			<st id="ST" editor="bool" />
