@@ -69,7 +69,7 @@ class DSCConnection:
                 _LOGGER.info('waiting on data')
                 pass
             except ConnectionResetError as msg:
-                _LOGGER.error('Connection error: ' + msg)
+                _LOGGER.error('Connection error: ' + str(msg))
                 self.connected = False
 
 
