@@ -110,7 +110,13 @@ class Controller(polyinterface.Controller):
         pass
 
     def shortPoll(self):
-        pass
+        if not self.mesg_thread.is_alive():
+            LOGGER.info('DSC thread has stopped, restarting....')
+            self.dsc.Close()
+            self.dsc.Connect()
+            self.mesg_thread = threading.Thread(target=self.dsc.Loop, args=(self.processCommand,))
+            self.mesg_thread.daemon = True
+            self.mesg_thread.start()
 
     def query(self):
         for node in self.nodes:
@@ -139,9 +145,13 @@ class Controller(polyinterface.Controller):
     # Delete the node server from Polyglot
     def delete(self):
         LOGGER.info('Removing node server')
+        self.dsc.connected = False
+        self.dsc.Close()
 
     def stop(self):
         LOGGER.info('Stopping node server')
+        self.dsc.connected = False
+        self.dsc.Close()
 
     def update_profile(self, command):
         st = self.poly.installprofile()
