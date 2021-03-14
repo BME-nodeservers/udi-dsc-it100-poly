@@ -1,0 +1,34 @@
+# controller
+ND-DSC-NAME = DSC Alarm Panel
+ND-DSC-ICON = GenericCtl
+CMD-ctl-PANIC_FIRE-NAME = Trigger Fire
+CMD-ctl-PANIC_AUX-NAME = Trigger Ambulance
+CMD-ctl-PANIC_POLICE-NAME = Trigger Police
+ST-ctl-ST-NAME = NodeServer Online
+ST-ctl-GV0-NAME = System Alarm State
+ST-ctl-GV1-NAME = Bell Trouble
+ST-ctl-GV2-NAME = Battery Trouble
+ST-ctl-GV3-NAME = AC Trouble
+ST-ctl-GV4-NAME = FTC Trouble
+ST-ctl-GV5-NAME = Tamper Trouble
+
+# zone node
+ND-zone-NAME = Alarm Zone
+ND-zone-ICON = Input
+ST-zone-ST-NAME = Zone State
+ST-zone-ALARM-NAME = Bypassed
+CMD-zone-DON-NAME = Power On
+CMD-zone-DOF-NAME = Power Off
+
+POWER-0 = Off
+POWER-1 = On
+
+STATE-0 = Ok
+STATE-1 = Alarming - Smoke
+STATE-2 = Alarming - Panic (Fire)
+STATE-3 = Alarming - Panic (Aux)
+STATE-4 = Alarming - Panic (Police)
+
+ZONE-0 = Closed
+ZONE-1 = Open
+ZONE-2 = Alarming

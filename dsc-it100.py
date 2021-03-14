@@ -1,22 +1,22 @@
 #!/usr/bin/env python3
 """
-Polyglot v2 node server for DSC alarm panel control/status via IT-100
-Copyright (C) 2020 Robert Paauwe
+Polyglot v3 node server for DSC alarm panel control/status via IT-100
+Copyright (C) 2020,2021 Robert Paauwe
 """
 import sys
 import time
-import polyinterface
+import udi_interface
 from nodes import dsc
 from nodes import zone
 
-LOGGER = polyinterface.LOGGER
+LOGGER = udi_interface.LOGGER
 
 if __name__ == "__main__":
     try:
-        polyglot = polyinterface.Interface('DSC')
+        polyglot = udi_interface.Interface([])
         polyglot.start()
-        control = dsc.Controller(polyglot)
-        control.runForever()
+        dsc.Controller(polyglot, 'controller', 'controller', 'DSC')
+        polyglot.runForever()
     except (KeyboardInterrupt, SystemExit):
         sys.exit(0)
         

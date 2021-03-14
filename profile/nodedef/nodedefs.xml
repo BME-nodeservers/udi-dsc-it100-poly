@@ -17,12 +17,6 @@
 				<cmd id="DOF" />
 			</sends>
 			<accepts>
-				<cmd id="DISCOVER" />
-        		<cmd id="REMOVE_NOTICES_ALL" />
-        		<cmd id="UPDATE_PROFILE" />
-        		<cmd id="DEBUG">
-            		<p id="" editor="DEBUG" init="10"/>
-        		</cmd>
         		<cmd id="PANIC_FIRE" />
         		<cmd id="PANIC_AUX" />
         		<cmd id="PANIC_POLICE" />

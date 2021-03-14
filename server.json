@@ -1,6 +1,6 @@
 {
     "name": "DSC-IT100",
-    "docs": "https://github.com/bpaauwe/udi-dsc-it100-poly/README.md",
+    "docs": "https://github.com/BME-nodeservers/udi-dsc-it100-poly/README.md",
     "type": "python3",
     "executable": "dsc-it100.py",
     "install": "install.sh",
@@ -9,14 +9,25 @@
     "shortPoll": "5",
     "longPoll": "60",
     "profile_version": "1.0.0",
+	"customParams": {
+		"IP Address": "",
+		"Port": ""
+	},
     "credits": [
     	{
     		"title": "DSC-IT100 A node server for DSC Alarm Panels",
     		"author": "Bob Paauwe",
-    		"version": "1.0.0",
-    		"date": "June 17, 2020",
-    		"source": "https://github.com/bpaauwe/udi-dsc-it100-poly",
-		"license": "https://github.com/bpaauwe/udi-dsc-it100-poly/LICENSE"
+    		"version": "2.0.0",
+    		"date": "March 14, 2021",
+    		"source": "https://github.com/BME-nodeservers/udi-dsc-it100-poly",
+		"license": "https://github.com/BME-nodeservers/udi-dsc-it100-poly/LICENSE"
 		}
-	]
+	],
+	"store": {
+		"developer": "bpaauwe@bobsplace.com",
+		"price": 0.00,
+		"recurring": 0,
+		"recurring_interval": "month",
+		"recurring_period": 0
+	}
 }

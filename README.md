@@ -1,84 +1,53 @@
 
-# russound-polyglot
+# DSC IT100 Polyglot
 
-This is the Russound Poly for the [Universal Devices ISY994i](https://www.universal-devices.com/residential/ISY) [Polyglot interface](http://www.universal-devices.com/developers/polyglot/docs/) with  [Polyglot V2](https://github.com/Einstein42/udi-polyglotv2)
-(c) 2020 Robert Paauwe
-MIT license.
+This is a DSC Alarm Poly for systems with a IT100 interface connected to a serial/IP bridge.
+Designed to work with [Universal Devices ISY994i](https://www.universal-devices.com/residential/ISY)
+[Polyglot interface](http://www.universal-devices.com/developers/polyglot/docs/)
+Running on a [Polisy](https;//www.universal-devices.com/product/polisy/)
 
-This node server is intended to support the legacy [Russound CAV/CAS whole house audio controllers](http://www.russound.com/).
+Copyright (c)2020,2021 Robert Paauwe
 
-The legacy Russound controllers use a serial protocal called RNET. However, this node server expects to access the controller via a ethernet-to-serial converter. The only configuration tested and supported is a QualTech serial device server running in raw UDP mode.
-
-This only supports a single controller with 6 zones and 6 sources.
+This node server is intended to provide basic support for a DSC PC 16xx alarm system with an IT100
+serial interface.  It connects to the IT100 over a serial/ethernet bridge.
 
 ## Installation
 
 1. Backup Your ISY in case of problems!
    * Really, do the backup, please
 2. Go to the Polyglot Store in the UI and install.
-3. Add NodeServer in Polyglot Web
-   * After the install completes, Polyglot will reboot your ISY, you can watch the status in the main polyglot log.
-4. Once your ISY is back up open the Admin Console.
-5. Configure the node server with your station ID.
+3. Add NodeServer in Polyglot Web to a free slot.
+4. From the Dashboard, select the DSC-IT100 node server and go to the configuration tab.
+5. Configure the IP address and port of the serial/IP bridge device.
+6. Configure the active zones by adding a key/value pair for each active zone.  The key
+   must be the "Zone [n]" and the value is the name for the zone.  For example:
+   *  "Zone 1"  "Front door"
 
 ### Node Settings
 The settings for this node are:
 
-#### Short Poll
-   * Not used
 #### Long Poll
-   * Not used
+   * Verify that the connection to the IT100 is still good and attempt to re-connect if necessar.
 
 #### IP Address
-   * The IP Address of the serial device server conected to the Russound controller. 
+   * The IP Address of the serial device server conected to the IT100. 
 #### Port
    * The UDP/TCP port number assigned by the serial device server for the serial port.
-#### Network Protocol
-   * Either UDP or TCP.
 #### Zone 1
    * The name for zone 1
 #### Zone 2
    * The name for zone 2
-#### Zone 3
-   * The name for zone 3
-#### Zone 4
-   * The name for zone 4
-#### Zone 5
-   * The name for zone 5
-#### Zone 6
-   * The name for zone 6
-
-#### Configuring source names
-   * It's possible to configure the source names to match your configuration. When the node iserver is installed, it will make a copy of the default nls profile file. You can then manually edit this copy with the correct source names and then update the profile files on the ISY.
-
-   * To change the source names look for the strings SOURCE-1 through SOURCE-6 and change
- the names.  Then, from the ISY admin console, find the Russound node and use the "Update Profile" button to push the changed file to the ISY. You'll need to restart the admin console to see the change.
-
-   * You can also change the lables in the Russound node to display your specific source names.  Look for ST-ctl-GV1-NAME through ST-ctl-GV6-NAME in the nls file and update them with your source names.
-
+#### Zone 64
+   * The name for zone 64
 
 ## Requirements
-
-1. Polyglot V2 itself should be run on Raspian Stretch.
-  To check your version, ```cat /etc/os-release``` and the first line should look like
-  ```PRETTY_NAME="Raspbian GNU/Linux 9 (stretch)"```. It is possible to upgrade from Jessie to
-  Stretch, but I would recommend just re-imaging the SD card.  Some helpful links:
-   * https://www.raspberrypi.org/blog/raspbian-stretch/
-   * https://linuxconfig.org/raspbian-gnu-linux-upgrade-from-jessie-to-raspbian-stretch-9
-2. This has only been tested with ISY 5.0.14 so it is not guaranteed to work with any other version.
-
-# Upgrading
-
-Open the Polyglot web page, go to nodeserver store and click "Update" for "Russound".
-
-For Polyglot 2.0.35, hit "Cancel" in the update window so the profile will not be updated and ISY rebooted.  The install procedure will properly handle this for you.  This will change with 2.0.36, for that version you will always say "No" and let the install procedure handle it for you as well.
-
-Then restart the Russound nodeserver by selecting it in the Polyglot dashboard and select Control -> Restart, then watch the log to make sure everything goes well.
-
-The Roku nodeserver keeps track of the version number and when a profile rebuild is necessary.  The profile/version.txt will contain the Russound profile_version which is updated in server.json when the profile should be rebuilt.
+1. Polyglot V3.
+2. ISY firmware 5.3.x or later
+3. A DSC alarm panel with IT100 interface
 
 # Release Notes
-
+- 2.0.0 03/14/2021
+   - Ported to PG3
 - 1.0.2 06/16/2020
    - Process undocumented message to get keypad source selection.
 - 1.0.2 06/16/2020

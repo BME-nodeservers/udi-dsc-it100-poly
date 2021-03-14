@@ -1,16 +1,14 @@
 # Node definition for a alarm zone
 # 
 
-import polyinterface
+import udi_interface
 import json
 import time
 import datetime
-import node_funcs
 
-LOGGER = polyinterface.LOGGER
+LOGGER = udi_interface.LOGGER
 
-@node_funcs.add_functions_as_methods(node_funcs.functions)
-class Zone(polyinterface.Node):
+class Zone(udi_interface.Node):
     id = 'zone'
     #power_state = False
 
