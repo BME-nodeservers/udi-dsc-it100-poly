@@ -32,7 +32,7 @@ class Controller(udi_interface.Node):
         self.dsc = None
         self.mesg_thread = None
         self.discovery_ok = False
-        self.zone_map = []
+        self.zone_map = {}
 
         self.Parameters = Custom(polyglot, 'customparams')
         self.Notices = Custom(polyglot, 'notices')
@@ -109,8 +109,13 @@ class Controller(udi_interface.Node):
         if 'longPoll' in polltype:
             return
 
+        """
+        if not self.configured:
+            return
+        """
+
         # Attempt to restart network connect if it drops
-        if not self.mesg_thread.is_alive():
+        if self.mesg_thread is not None and not self.mesg_thread.is_alive():
             LOGGER.info('DSC thread has stopped, restarting....')
             self.dsc.Close()
             self.dsc.Connect()
@@ -124,25 +129,26 @@ class Controller(udi_interface.Node):
 
     def discover(self, *args, **kwargs):
         LOGGER.debug('in discover() - Setting up zones')
+        #for z in range(1,65):
         for z in self.zone_map:
-        for z in range(1,65):
-            param = 'Zone ' + str(z)
-            if self.Parameters[param]) is None:
+            if self.Parameters[z] is None:
                 # TODO: Check and delete if neccessary zone
                 continue
 
-            node = zone.Zone(self, self.address, 'zone_' + str(z), self.Parameters[param])
+            addr = z.lower().replace(' ', '_')
+            node = zone.Zone(self, self.address, addr, self.Parameters[z])
 
             # TODO: check and rename if necessary zone
             try:
-                old = self.poly.getNode('zone_' + str(z))
-                if old['name'] != self.params.get(param):
-                    self.delNode('zone_' + str(z))
+                old = self.poly.getNode(addr)
+                if old['name'] != self.params.get(z):
+                    self.delNode(addr)
                     time.sleep(1)  # give it time to remove from database
             except:
-                LOGGER.warning('Failed to delete node ' + param)
+                LOGGER.warning('Failed to delete node ' + addr)
 
-            self.addNode(node)
+            LOGGER.error(node)
+            self.poly.addNode(node)
 
     # Delete the node server from Polyglot
     def delete(self):
@@ -161,26 +167,30 @@ class Controller(udi_interface.Node):
             zone = int(msg.data.decode())
             zone_addr = 'zone_' + str(zone)
             LOGGER.warning('   zone {} open'.format(zone))
-            if zone_addr in self.nodes:
-                self.nodes[zone_addr].set_state(1)
+            znode = self.poly.getNode(zone_addr)
+            if znode:
+                znode.set_state(1)
         elif msg.command == protocol.MSG_ZONE_RESTORED:
             zone = int(msg.data.decode())
             zone_addr = 'zone_' + str(zone)
             LOGGER.warning('   zone {} closed'.format(zone))
-            if zone_addr in self.nodes:
-                self.nodes[zone_addr].set_state(0)
+            znode = self.poly.getNode(zone_addr)
+            if znode:
+                znode.set_state(0)
         elif msg.command == protocol.MSG_ZONE_ALARM:
             zone = int(msg.data[:-3].decode())
             zone_addr = 'zone_' + str(zone)
             LOGGER.warning('   zone {} in alarm'.format(zone))
-            if zone_addr in self.nodes:
-                self.nodes[zone_addr].set_state(2)
+            znode = self.poly.getNode(zone_addr)
+            if znode:
+                znode.set_state(3)
         elif msg.command == protocol.MSG_ZONE_ALARM_RESTORE:
             zone = int(msg.data[:-3].decode())
             zone_addr = 'zone_' + str(zone)
             LOGGER.warning('   zone {} alarm restore'.format(zone))
-            if zone_addr in self.nodes:
-                self.nodes[zone_addr].set_state(0)
+            znode = self.poly.getNode(zone_addr)
+            if znode:
+                znode.set_state(0)
         elif msg.command == protocol.MSG_LCD_UPDATE: # LCD update
             LOGGER.warning('   message = ' + str(msg.data[5:].decode()))
         elif msg.command == protocol.MSG_LCD_UPDATE: # LCD update
