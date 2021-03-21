@@ -1,6 +1,6 @@
 # controller
-ND-DSC-NAME = DSC Alarm Panel
-ND-DSC-ICON = GenericCtl
+ND-dsc-NAME = DSC Alarm Panel
+ND-dsc-ICON = GenericCtl
 CMD-ctl-PANIC_FIRE-NAME = Trigger Fire
 CMD-ctl-PANIC_AUX-NAME = Trigger Ambulance
 CMD-ctl-PANIC_POLICE-NAME = Trigger Police
