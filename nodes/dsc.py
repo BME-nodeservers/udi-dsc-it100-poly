@@ -136,7 +136,7 @@ class Controller(udi_interface.Node):
                 continue
 
             addr = z.lower().replace(' ', '_')
-            node = zone.Zone(self, self.address, addr, self.Parameters[z])
+            node = zone.Zone(self.poly, self.address, addr, self.Parameters[z])
 
             # TODO: check and rename if necessary zone
             try:
